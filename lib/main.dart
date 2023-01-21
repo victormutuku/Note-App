@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:note_app/home.dart';
-import 'package:note_app/new_note.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+import './screens/home.dart';
+import './screens/new_note.dart';
+
+void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox('Notes');
   runApp(const MyApp());
 }
 
@@ -18,10 +22,9 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomeScreen(),
       routes: {
-        NewNote.routeName:(context) => const NewNote(),
+        NewNote.routeName: (context) => const NewNote(),
       },
       debugShowCheckedModeBanner: false,
     );
   }
 }
-
