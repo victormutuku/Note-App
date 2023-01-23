@@ -18,14 +18,24 @@ class NoteCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
+                  Flexible(
+                    child: Text(
+                      title,
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                   )
                 ],
               ),
-              Text(text)
+              Flexible(
+                child: Text(
+                  text,
+                  overflow: TextOverflow.clip,
+                ),
+              ),
             ],
           ),
         ),
