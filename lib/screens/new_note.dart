@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/note.dart';
@@ -22,11 +21,9 @@ class _NewNoteState extends State<NewNote> {
   void _save() {
     if (_textController.text.isEmpty && _titleController.text.isEmpty) {
       Navigator.of(context).pushNamed("/");
-      Note savedNote = box.values.last;
-      print(box.keys.first);
       return;
     }
-    Note note = Note.createNote(
+    Note note = Note(
       id: DateTime.now().toIso8601String(),
       title: _titleController.text.isEmpty ? "Untitled" : _titleController.text,
       text: _textController.text,

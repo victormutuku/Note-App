@@ -16,7 +16,14 @@ class NoteAdapter extends TypeAdapter<Note> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Note();
+    return Note(
+      id: fields[0] as String,
+      title: fields[1] as String,
+      text: fields[2] as String,
+      dateCreated: fields[3] as String,
+      dateModified: fields[4] as String,
+      modCount: fields[0] as int,
+    );
   }
 
   @override

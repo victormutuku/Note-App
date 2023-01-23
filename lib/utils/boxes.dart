@@ -7,18 +7,15 @@ class Boxes with ChangeNotifier {
 
   List<Note> getNotes() {
     List<Note> fetched = openNotes.values.toList();
-    Note blank = Note.createNote(
-      id: "",
-      title: "",
-      text: "",
-      dateCreated: "",
-      dateModified: "",
-      modCount: 0,
-    );
+
     if (fetched.isEmpty) {
       return [];
     } else {
       return fetched;
     }
+  }
+
+  void closeBoxes() {
+    Hive.close();
   }
 }

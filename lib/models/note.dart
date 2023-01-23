@@ -3,28 +3,26 @@ import 'package:hive/hive.dart';
 part 'note.g.dart';
 
 @HiveType(typeId: 0)
-class Note {
+class Note extends HiveObject{
   @HiveType(typeId: 0)
-  late String id;
+  final String id;
 
   @HiveType(typeId: 1)
-  late String title;
+  final String title;
 
   @HiveType(typeId: 2)
-  late String text;
+  final String text;
 
   @HiveType(typeId: 3)
-  late String dateCreated;
+  final String dateCreated;
 
   @HiveType(typeId: 4)
-  late String dateModified;
+  final String dateModified;
 
   @HiveType(typeId: 5)
-  late int modCount;
+  final int modCount;
 
-  Note();
-
-  Note.createNote({
+  Note({
     required this.id,
     required this.title,
     required this.text,
