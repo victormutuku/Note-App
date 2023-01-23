@@ -16,7 +16,6 @@ class _NewNoteState extends State<NewNote> {
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
 
-  final box = Boxes.openNotes;
 
   void _save() {
     if (_textController.text.isEmpty && _titleController.text.isEmpty) {
@@ -31,7 +30,6 @@ class _NewNoteState extends State<NewNote> {
       dateModified: DateTime.now().toIso8601String(),
       modCount: 0,
     );
-    box.add(note);
     Navigator.of(context).pushNamed("/");
   }
 

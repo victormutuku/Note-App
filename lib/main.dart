@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:note_app/models/note.dart';
 import 'package:note_app/utils/boxes.dart';
 import 'package:provider/provider.dart';
 
@@ -8,9 +6,6 @@ import './screens/home.dart';
 import './screens/new_note.dart';
 
 void main() async {
-  await Hive.initFlutter();
-  Hive.registerAdapter(NoteAdapter());
-  await Hive.openBox<Note>('Notes');
   runApp(const MyApp());
 }
 
@@ -22,7 +17,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  
+
   @override
   void dispose() {
     Provider.of<Boxes>(context).closeBoxes();
