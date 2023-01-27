@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:note_app/utils/database.dart';
+import 'package:provider/provider.dart';
 
 import '../models/note.dart';
+import '../utils/database.dart';
+import '../utils/notes.dart';
 
 class NewNote extends StatefulWidget {
   static const routeName = "/newnote";
@@ -13,8 +15,22 @@ class NewNote extends StatefulWidget {
 }
 
 class _NewNoteState extends State<NewNote> {
-  final TextEditingController _textController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void didChangeDependencies() {
+    final notes = Provider.of<Notes>(context, listen: false);
+    final noteId = ModalRoute.of(context)!.settings.arguments;
+    if (noteId != null) {
+      final foundNote = notes.findById(noteId as String);
+      _titleController.text = foundNote['title'];
+      _textController.text = foundNote['text'];
+    } else {
+      return;
+    }
+    super.didChangeDependencies();
+  }
 
   void _save() {
     if (_textController.text.isEmpty && _titleController.text.isEmpty) {
@@ -38,7 +54,9 @@ class _NewNoteState extends State<NewNote> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Untitled'),
+          title: Text(_titleController.text.isNotEmpty
+              ? _titleController.text
+              : 'Untitled'),
           actions: [
             IconButton(
               onPressed: _save,

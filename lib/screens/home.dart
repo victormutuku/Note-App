@@ -56,6 +56,7 @@ class HomeScreen extends StatelessWidget {
                       itemCount: notes.fetchedNotes.length,
                       itemBuilder: ((context, i) => GridTile(
                             child: NoteCard(
+                              id: notes.fetchedNotes[i]['id'],
                               title: notes.fetchedNotes[i]['title'],
                               text: notes.fetchedNotes[i]['text'],
                             ),

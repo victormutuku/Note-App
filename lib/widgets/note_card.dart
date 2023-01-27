@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:note_app/screens/new_note.dart';
 
 class NoteCard extends StatelessWidget {
+  String id;
   String title;
   String text;
-  NoteCard({required this.text, required this.title, super.key});
+  NoteCard(
+      {required this.id, required this.text, required this.title, super.key});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () => Navigator.of(context).pushNamed(NewNote.routeName, arguments: id),
       child: Card(
+        key: Key(id),
         color: Colors.lightBlue[100],
         elevation: 5,
         child: Container(
