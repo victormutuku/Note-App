@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:note_app/utils/database.dart';
 
 import '../models/note.dart';
-import '../utils/boxes.dart';
 
 class NewNote extends StatefulWidget {
   static const routeName = "/newnote";
@@ -15,7 +15,6 @@ class NewNote extends StatefulWidget {
 class _NewNoteState extends State<NewNote> {
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
-
 
   void _save() {
     if (_textController.text.isEmpty && _titleController.text.isEmpty) {
@@ -30,6 +29,7 @@ class _NewNoteState extends State<NewNote> {
       dateModified: DateTime.now().toIso8601String(),
       modCount: 0,
     );
+    DatabaseHelper.insertNote(note);
     Navigator.of(context).pushNamed("/");
   }
 
