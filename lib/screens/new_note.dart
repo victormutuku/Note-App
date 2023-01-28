@@ -17,35 +17,68 @@ class NewNote extends StatefulWidget {
 class _NewNoteState extends State<NewNote> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
+  bool runOnce = true;
 
   @override
   void didChangeDependencies() {
-    final notes = Provider.of<Notes>(context, listen: false);
-    final noteId = ModalRoute.of(context)!.settings.arguments;
-    if (noteId != null) {
-      final foundNote = notes.findById(noteId as String);
-      _titleController.text = foundNote['title'];
-      _textController.text = foundNote['text'];
-    } else {
-      return;
+    if (runOnce) {
+      final notes = Provider.of<Notes>(context, listen: false);
+      final noteId = ModalRoute.of(context)!.settings.arguments;
+      if (noteId != null) {
+        final foundNote = notes.findById(noteId as String);
+        _titleController.text = foundNote['title'];
+        _textController.text = foundNote['text'];
+      } else {
+        return;
+      }
     }
+    runOnce = false;
     super.didChangeDependencies();
   }
 
   void _save() {
-    if (_textController.text.isEmpty && _titleController.text.isEmpty) {
-      Navigator.of(context).pushNamed("/");
-      return;
+    final notes = Provider.of<Notes>(context, listen: false);
+    final noteId = ModalRoute.of(context)!.settings.arguments;
+
+    if (noteId != null) {
+      final foundNote = notes.findById(noteId as String);
+      final foundNoteId = foundNote['id'] as String;
+      int foundModCount = foundNote['modCount'] as int;
+
+      if (_textController.text.isEmpty && _titleController.text.isEmpty) {
+        DatabaseHelper.deleteNote(foundNoteId);
+        Navigator.of(context).pushNamed("/");
+        return;
+      }
+
+      Note note = Note(
+        id: foundNoteId,
+        title:
+            _titleController.text.isEmpty ? "Untitled" : _titleController.text,
+        text: _textController.text,
+        dateCreated: foundNote['dateCreated'],
+        dateModified: DateTime.now().toIso8601String(),
+        modCount: foundModCount++,
+      );
+      DatabaseHelper.updateNote(note);
+    } else {
+      if (_textController.text.isEmpty && _titleController.text.isEmpty) {
+        Navigator.of(context).pushNamed("/");
+        return;
+      }
+
+      Note note = Note(
+        id: DateTime.now().toIso8601String(),
+        title:
+            _titleController.text.isEmpty ? "Untitled" : _titleController.text,
+        text: _textController.text,
+        dateCreated: DateTime.now().toIso8601String(),
+        dateModified: DateTime.now().toIso8601String(),
+        modCount: 0,
+      );
+      DatabaseHelper.insertNote(note);
     }
-    Note note = Note(
-      id: DateTime.now().toIso8601String(),
-      title: _titleController.text.isEmpty ? "Untitled" : _titleController.text,
-      text: _textController.text,
-      dateCreated: DateTime.now().toIso8601String(),
-      dateModified: DateTime.now().toIso8601String(),
-      modCount: 0,
-    );
-    DatabaseHelper.insertNote(note);
+
     Navigator.of(context).pushNamed("/");
   }
 

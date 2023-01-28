@@ -27,11 +27,40 @@ class DatabaseHelper {
     };
 
     final db = await DatabaseHelper._initializeDb();
-    db.insert(_notes, noteData, conflictAlgorithm: ConflictAlgorithm.replace);
+    db.insert(
+      _notes,
+      noteData,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   static Future<List<Map<String, dynamic>>> getNotes() async {
     final db = await DatabaseHelper._initializeDb();
     return db.query(_notes);
+  }
+
+  static Future<void> updateNote(Note note) async {
+    final Map<String, Object> noteData = {
+      'id': note.id,
+      'title': note.title,
+      'text': note.text,
+      'dateCreated': note.dateCreated,
+      'dateModified': note.dateModified,
+      'modCount': note.modCount,
+    };
+
+    final db = await DatabaseHelper._initializeDb();
+    db.update(
+      _notes,
+      noteData,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+      where: 'id = ?',
+      whereArgs: [note.id]
+    );
+  }
+
+  static Future<void> deleteNote(String noteId) async{
+    final db = await DatabaseHelper._initializeDb();
+    db.delete(_notes, where: 'id = ?', whereArgs: [noteId]);
   }
 }
