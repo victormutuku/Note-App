@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
           NewNote.routeName: (context) => const NewNote(),
         },
         debugShowCheckedModeBanner: false,
+        // debugShowMaterialGrid: true,
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:note_app/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 import '../models/note.dart';
@@ -36,6 +37,10 @@ class _NewNoteState extends State<NewNote> {
     super.didChangeDependencies();
   }
 
+  void _navigateBack() {
+    Navigator.of(context).pop();
+  }
+
   void _save() {
     final notes = Provider.of<Notes>(context, listen: false);
     final noteId = ModalRoute.of(context)!.settings.arguments;
@@ -47,7 +52,7 @@ class _NewNoteState extends State<NewNote> {
 
       if (_textController.text.isEmpty && _titleController.text.isEmpty) {
         DatabaseHelper.deleteNote(foundNoteId);
-        Navigator.of(context).pushNamed("/");
+        _navigateBack();
         return;
       }
 
@@ -63,7 +68,7 @@ class _NewNoteState extends State<NewNote> {
       DatabaseHelper.updateNote(note);
     } else {
       if (_textController.text.isEmpty && _titleController.text.isEmpty) {
-        Navigator.of(context).pushNamed("/");
+        _navigateBack();
         return;
       }
 
@@ -79,50 +84,53 @@ class _NewNoteState extends State<NewNote> {
       DatabaseHelper.insertNote(note);
     }
 
-    Navigator.of(context).pushNamed("/");
+    _navigateBack();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(_titleController.text.isNotEmpty
-              ? _titleController.text
-              : 'Untitled'),
-          actions: [
-            IconButton(
-              onPressed: _save,
-              icon: const Icon(Icons.check),
-            ),
-          ],
+    return Scaffold(
+      backgroundColor: beige,
+      appBar: AppBar(
+        backgroundColor: beige,
+        iconTheme: const IconThemeData(color: black),
+        elevation: 0,
+        title: Text(
+          _titleController.text.isNotEmpty ? _titleController.text : 'Untitled',
+          style: const TextStyle(color: black),
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                    border: InputBorder.none, hintText: "Title"),
-                style: GoogleFonts.roboto(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w400,
-                ),
-                keyboardType: TextInputType.multiline,
+        actions: [
+          IconButton(
+            onPressed: _save,
+            icon: const Icon(Icons.check),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                  border: InputBorder.none, hintText: "Title"),
+              style: GoogleFonts.roboto(
+                fontSize: 24,
+                fontWeight: FontWeight.w400,
               ),
+              keyboardType: TextInputType.multiline,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: TextField(
-                controller: _textController,
-                decoration: const InputDecoration(
-                    border: InputBorder.none, hintText: "Write here"),
-                maxLines: null,
-              ),
-            )
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextField(
+              controller: _textController,
+              decoration: const InputDecoration(
+                  border: InputBorder.none, hintText: "Write here"),
+              maxLines: null,
+            ),
+          )
+        ],
       ),
     );
   }

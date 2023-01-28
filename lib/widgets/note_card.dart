@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_app/screens/new_note.dart';
+import 'package:note_app/utils/colors.dart';
 
 class NoteCard extends StatelessWidget {
   final String id;
@@ -19,7 +20,7 @@ class NoteCard extends StatelessWidget {
           Navigator.of(context).pushNamed(NewNote.routeName, arguments: id),
       child: Card(
         key: Key(id),
-        color: Colors.lightBlue[100],
+        color: beige,
         elevation: 5,
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -34,6 +35,7 @@ class NoteCard extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                        // color: brown,
                       ),
                     ),
                   )
@@ -42,6 +44,7 @@ class NoteCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   text,
+                  style: TextStyle(color: brown),
                   overflow: TextOverflow.clip,
                 ),
               ),
