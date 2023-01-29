@@ -5,8 +5,7 @@ import '../utils/notes.dart';
 import './note_card.dart';
 
 class NotesGrid extends StatelessWidget {
-  final dynamic notes;
-  const NotesGrid({required this.notes, super.key});
+  const NotesGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
