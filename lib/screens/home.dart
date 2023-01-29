@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import './new_note.dart';
-import '../widgets/note_card.dart';
+import '../screens/empty_notes.dart';
+import '../widgets/notes_grid.dart';
 import '../utils/notes.dart';
 import '../utils/colors.dart';
 
@@ -43,41 +45,13 @@ class HomeScreen extends StatelessWidget {
             builder: (context, snapshot) => snapshot.connectionState ==
                     ConnectionState.waiting
                 ? const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: brown,
+                    ),
                   )
-                : !snapshot.hasData
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add,
-                              color: Colors.grey[700],
-                              size: 30,
-                            ),
-                            Text(
-                              "Add a note",
-                              style: TextStyle(
-                                  color: Colors.grey[700], fontSize: 20),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Consumer<Notes>(
-                        builder: (context, notes, child) => GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          itemCount: notes.fetchedNotes.length,
-                          itemBuilder: ((context, i) => GridTile(
-                                child: NoteCard(
-                                  id: notes.fetchedNotes[i]['id'],
-                                  title: notes.fetchedNotes[i]['title'],
-                                  text: notes.fetchedNotes[i]['text'],
-                                ),
-                              )),
-                        ),
-                      ),
+                : snapshot.data!.isEmpty
+                    ? const EmptyNotes()
+                    : NotesGrid(notes: notes)
           ),
           Padding(
             padding:
