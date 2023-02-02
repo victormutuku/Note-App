@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note_app/screens/settings.dart';
 import 'package:provider/provider.dart';
 
 import './new_note.dart';
@@ -7,76 +8,61 @@ import '../widgets/notes_grid.dart';
 import '../utils/notes.dart';
 import '../utils/colors.dart';
 
+enum Selection { edit, settings }
+
 class HomeScreen extends StatelessWidget {
+  static const routeName = '/homescreen';
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final notes = Provider.of<Notes>(context, listen: false).getNotes();
-
     return Scaffold(
       backgroundColor: beige,
       appBar: AppBar(
-        backgroundColor: beige,
         elevation: 0,
         iconTheme: const IconThemeData(color: brown),
-        title: const Center(
-          child: Text(
-            'Notes',
-            style: TextStyle(color: black),
-          ),
+        title: const Text(
+          'Notes',
+          style: TextStyle(color: black),
         ),
+        centerTitle: true,
         actions: [
           PopupMenuButton(
             color: beige,
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(
+              Icons.more_vert,
+              color: brown,
+            ),
             position: PopupMenuPosition.under,
             itemBuilder: (_) => [
-              const PopupMenuItem(child: Text('Edit')),
-              const PopupMenuItem(child: Text('Settings'))
+              const PopupMenuItem(
+                value: Selection.settings,
+                child: Text('Edit'),
+              ),
+              const PopupMenuItem(
+                value: Selection.settings,
+                child: Text('Settings'),
+              ),
             ],
+            onSelected: (value) {
+              value == Selection.settings
+                  ? Navigator.of(context).pushNamed(SettingsScreen.routeName)
+                  : Navigator.of(context).pushNamed(NewNote.routeName);
+            },
           )
         ],
       ),
-      body: Stack(
-        children: [
-          FutureBuilder(
-            future: notes,
-            builder: (context, snapshot) => snapshot.connectionState ==
-                    ConnectionState.waiting
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: brown,
-                    ),
-                  )
-                : snapshot.data!.isEmpty
-                    ? const EmptyNotes()
-                    : NotesGrid(notes: notes)
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    FloatingActionButton(
-                      onPressed: () =>
-                          Navigator.of(context).pushNamed(NewNote.routeName),
-                      backgroundColor: brown,
-                      child: const Icon(
-                        Icons.add,
-                        color: white,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
+      body: Consumer<Notes>(
+        builder: (context, notes, child) =>
+            notes.fetchedNotes.isEmpty ? const EmptyNotes() : const NotesGrid(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context).pushNamed(NewNote.routeName),
+        backgroundColor: brown,
+        child: const Icon(
+          Icons.add,
+          color: white,
+        ),
       ),
     );
   }
