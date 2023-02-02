@@ -2,12 +2,10 @@ import 'package:sqflite/sqflite.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 
-import '../models/note.dart';
-
 class DatabaseHelper {
-  static const String _notes = "user_notes";
+  static const String notes = "user_notes";
 
-  static Future<Database> _initializeDb() async {
+  static Future<Database> initializeDb() async {
     final dbPath = await getDatabasesPath();
     return openDatabase(path.join(dbPath, 'notes.db'),
         onCreate: ((db, version) {
@@ -16,51 +14,8 @@ class DatabaseHelper {
     }), version: 1);
   }
 
-  static Future<void> insertNote(Note note) async {
-    final Map<String, Object> noteData = {
-      'id': note.id,
-      'title': note.title,
-      'text': note.text,
-      'dateCreated': note.dateCreated,
-      'dateModified': note.dateModified,
-      'modCount': note.modCount,
-    };
-
-    final db = await DatabaseHelper._initializeDb();
-    db.insert(
-      _notes,
-      noteData,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
   static Future<List<Map<String, dynamic>>> getNotes() async {
-    final db = await DatabaseHelper._initializeDb();
-    return db.query(_notes);
-  }
-
-  static Future<void> updateNote(Note note) async {
-    final Map<String, Object> noteData = {
-      'id': note.id,
-      'title': note.title,
-      'text': note.text,
-      'dateCreated': note.dateCreated,
-      'dateModified': note.dateModified,
-      'modCount': note.modCount,
-    };
-
-    final db = await DatabaseHelper._initializeDb();
-    db.update(
-      _notes,
-      noteData,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-      where: 'id = ?',
-      whereArgs: [note.id]
-    );
-  }
-
-  static Future<void> deleteNote(String noteId) async{
-    final db = await DatabaseHelper._initializeDb();
-    db.delete(_notes, where: 'id = ?', whereArgs: [noteId]);
+    final db = await DatabaseHelper.initializeDb();
+    return db.query(notes);
   }
 }
