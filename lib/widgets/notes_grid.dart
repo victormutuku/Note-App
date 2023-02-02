@@ -15,7 +15,7 @@ class NotesGrid extends StatelessWidget {
             const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         itemCount: notes.fetchedNotes.length,
         itemBuilder: (context, i) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: const EdgeInsets.all(8.0),
           child: GridTile(
             child: NoteCard(
               id: notes.fetchedNotes[i]['id'],

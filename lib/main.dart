@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:note_app/screens/settings.dart';
+import 'package:note_app/utils/color_schemes.g.dart';
 import 'package:note_app/utils/notes.dart';
 import 'package:provider/provider.dart';
 
@@ -19,11 +21,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          colorScheme: lightColorScheme,
         ),
         home: const HomeScreen(),
         routes: {
+          HomeScreen.routeName:(context) => const HomeScreen(),
           NewNote.routeName: (context) => const NewNote(),
+          SettingsScreen.routeName:(context) => const SettingsScreen(),
         },
         debugShowCheckedModeBanner: false,
         // debugShowMaterialGrid: true,

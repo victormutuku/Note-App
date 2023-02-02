@@ -20,7 +20,7 @@ class NoteCard extends StatelessWidget {
           Navigator.of(context).pushNamed(NewNote.routeName, arguments: id),
       child: Card(
         key: Key(id),
-        color: beige,
+        color: lightbeige,
         elevation: 5,
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -44,7 +44,7 @@ class NoteCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   text,
-                  style: TextStyle(color: brown),
+                  style: const TextStyle(color: brown),
                   overflow: TextOverflow.clip,
                 ),
               ),
