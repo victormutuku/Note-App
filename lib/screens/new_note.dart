@@ -4,7 +4,6 @@ import 'package:note_app/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 import '../models/note.dart';
-import '../utils/database.dart';
 import '../utils/notes.dart';
 
 class NewNote extends StatefulWidget {
@@ -51,11 +50,10 @@ class _NewNoteState extends State<NewNote> {
       int foundModCount = foundNote['modCount'] as int;
 
       if (_textController.text.isEmpty && _titleController.text.isEmpty) {
-        DatabaseHelper.deleteNote(foundNoteId);
+        notes.deleteNote(foundNoteId);
         _navigateBack();
         return;
       }
-
       Note note = Note(
         id: foundNoteId,
         title:
@@ -65,7 +63,8 @@ class _NewNoteState extends State<NewNote> {
         dateModified: DateTime.now().toIso8601String(),
         modCount: foundModCount++,
       );
-      DatabaseHelper.updateNote(note);
+
+      notes.updateNote(note);
     } else {
       if (_textController.text.isEmpty && _titleController.text.isEmpty) {
         _navigateBack();
@@ -81,7 +80,8 @@ class _NewNoteState extends State<NewNote> {
         dateModified: DateTime.now().toIso8601String(),
         modCount: 0,
       );
-      DatabaseHelper.insertNote(note);
+      
+      notes.insertNote(note);
     }
 
     _navigateBack();
@@ -119,6 +119,7 @@ class _NewNoteState extends State<NewNote> {
                 fontWeight: FontWeight.w400,
               ),
               keyboardType: TextInputType.multiline,
+              cursorColor: brown,
             ),
           ),
           Padding(
@@ -128,6 +129,7 @@ class _NewNoteState extends State<NewNote> {
               decoration: const InputDecoration(
                   border: InputBorder.none, hintText: "Write here"),
               maxLines: null,
+              cursorColor: brown,
             ),
           )
         ],

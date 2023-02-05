@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/note.dart';
@@ -24,7 +22,6 @@ class Notes with ChangeNotifier {
     fetchedNotes = await DatabaseHelper.getNotes();
 
     notifyListeners();
-    log(fetchedNotes.toList().toString(), name: "Fetched Notes");
     return fetchedNotes.toList();
   }
 
@@ -70,5 +67,4 @@ class Notes with ChangeNotifier {
     db.delete(DatabaseHelper.notes, where: 'id = ?', whereArgs: [noteId]);
     notifyListeners();
   }
-
 }
