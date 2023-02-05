@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note_app/screens/empty_notes.dart';
 import 'package:note_app/screens/settings.dart';
 import 'package:note_app/widgets/circular_progress_bar.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +56,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Consumer<Notes>(
         builder: (context, notes, _) => notes.fetchedNotes.isEmpty
-            ? const CircularProgressBar()
+            ? const EmptyNotes()
             : const NotesGrid(),
       ),
       floatingActionButton: FloatingActionButton(

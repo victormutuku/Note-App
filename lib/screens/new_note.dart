@@ -50,7 +50,7 @@ class _NewNoteState extends State<NewNote> {
       int foundModCount = foundNote['modCount'] as int;
 
       if (_textController.text.isEmpty && _titleController.text.isEmpty) {
-        notes.deleteNote(foundNoteId);
+        _delete();
         _navigateBack();
         return;
       }
@@ -80,11 +80,26 @@ class _NewNoteState extends State<NewNote> {
         dateModified: DateTime.now().toIso8601String(),
         modCount: 0,
       );
-      
+
       notes.insertNote(note);
     }
 
     _navigateBack();
+  }
+
+  void _delete() {
+    final notes = Provider.of<Notes>(context, listen: false);
+    final noteId = ModalRoute.of(context)!.settings.arguments;
+
+    if (noteId != null) {
+      final foundNote = notes.findById(noteId as String);
+      final foundNoteId = foundNote['id'] as String;
+
+      notes.deleteNote(foundNoteId);
+      _navigateBack();
+    } else {
+      _navigateBack();
+    }
   }
 
   @override
@@ -104,6 +119,10 @@ class _NewNoteState extends State<NewNote> {
             onPressed: _save,
             icon: const Icon(Icons.check),
           ),
+          IconButton(
+            onPressed: _delete,
+            icon: const Icon(Icons.delete),
+          )
         ],
       ),
       body: Column(
