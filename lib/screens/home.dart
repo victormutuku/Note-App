@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:note_app/screens/settings.dart';
+import 'package:note_app/widgets/circular_progress_bar.dart';
 import 'package:provider/provider.dart';
 
 import './new_note.dart';
-import '../screens/empty_notes.dart';
 import '../widgets/notes_grid.dart';
 import '../utils/notes.dart';
 import '../utils/colors.dart';
@@ -16,6 +16,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nnotes = Provider.of<Notes>(context).getNotes();
     return Scaffold(
       backgroundColor: beige,
       appBar: AppBar(
@@ -53,8 +54,9 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Consumer<Notes>(
-        builder: (context, notes, child) =>
-            notes.fetchedNotes.isEmpty ? const EmptyNotes() : const NotesGrid(),
+        builder: (context, notes, _) => notes.fetchedNotes.isEmpty
+            ? const CircularProgressBar()
+            : const NotesGrid(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).pushNamed(NewNote.routeName),
