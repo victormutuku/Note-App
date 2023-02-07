@@ -22,12 +22,16 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: lightColorScheme,
+          pageTransitionsTheme: PageTransitionsTheme(builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          }),
         ),
         home: const HomeScreen(),
         routes: {
-          HomeScreen.routeName:(context) => const HomeScreen(),
+          HomeScreen.routeName: (context) => const HomeScreen(),
           NewNote.routeName: (context) => const NewNote(),
-          SettingsScreen.routeName:(context) => const SettingsScreen(),
+          SettingsScreen.routeName: (context) => const SettingsScreen(),
         },
         debugShowCheckedModeBanner: false,
         // debugShowMaterialGrid: true,
