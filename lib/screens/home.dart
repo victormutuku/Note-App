@@ -23,11 +23,57 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = false;
   bool _editSelected = false;
 
-  @override
   Widget build(BuildContext context) {
-    _isLoading = true;
-    final nnotes = Provider.of<Notes>(context).getNotes();
-    _isLoading = false;
+    final notes = Provider.of<Notes>(context).getNotes();
+
+    List<Widget> actions = [
+      PopupMenuButton(
+        color: beige,
+        icon: const Icon(
+          Icons.more_vert,
+          color: brown,
+        ),
+        position: PopupMenuPosition.under,
+        itemBuilder: (_) => [
+          const PopupMenuItem(
+            value: Selection.edit,
+            child: Text('Edit'),
+          ),
+          const PopupMenuItem(
+            value: Selection.settings,
+            child: Text('Settings'),
+          ),
+        ],
+        onSelected: (value) {
+          if (value == Selection.settings) {
+            Navigator.of(context).pushNamed(SettingsScreen.routeName);
+          } else {
+            setState(() {
+              _editSelected = !_editSelected;
+            });
+          }
+        },
+      )
+    ];
+
+    FloatingActionButton fab = _editSelected == false
+        ? FloatingActionButton(
+            onPressed: () => Navigator.of(context).pushNamed(NewNote.routeName),
+            backgroundColor: brown,
+            child: const Icon(
+              Icons.add,
+              color: white,
+            ),
+          )
+        : FloatingActionButton(
+            onPressed: () => Navigator.of(context).pushNamed(NewNote.routeName),
+            backgroundColor: red,
+            child: const Icon(
+              Icons.delete,
+              color: white,
+            ),
+          );
+
     return Scaffold(
       backgroundColor: beige,
       appBar: AppBar(
@@ -38,35 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(color: black),
         ),
         centerTitle: true,
-        actions: [
-          PopupMenuButton(
-            color: beige,
-            icon: const Icon(
-              Icons.more_vert,
-              color: brown,
-            ),
-            position: PopupMenuPosition.under,
-            itemBuilder: (_) => [
-              const PopupMenuItem(
-                value: Selection.edit,
-                child: Text('Edit'),
-              ),
-              const PopupMenuItem(
-                value: Selection.settings,
-                child: Text('Settings'),
-              ),
-            ],
-            onSelected: (value) {
-              if (value == Selection.settings) {
-                Navigator.of(context).pushNamed(SettingsScreen.routeName);
-              } else {
-                setState(() {
-                  _editSelected = !_editSelected;
-                });
-              }
-            },
-          )
-        ],
+        actions: actions,
       ),
       body: Consumer<Notes>(
         builder: (context, notes, _) => notes.fetchedNotes.isEmpty
@@ -75,25 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? CircularProgressBar()
                 : NotesGrid(_editSelected),
       ),
-      floatingActionButton: _editSelected == false
-          ? FloatingActionButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(NewNote.routeName),
-              backgroundColor: brown,
-              child: const Icon(
-                Icons.add,
-                color: white,
-              ),
-            )
-          : FloatingActionButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(NewNote.routeName),
-              backgroundColor: red,
-              child: const Icon(
-                Icons.delete,
-                color: white,
-              ),
-            ),
+      floatingActionButton: fab,
     );
   }
 }
