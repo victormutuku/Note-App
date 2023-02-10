@@ -104,53 +104,52 @@ class _NewNoteState extends State<NewNote> {
 
   @override
   Widget build(BuildContext context) {
+    TextField titleTF = TextField(
+      controller: _titleController,
+      decoration:
+          const InputDecoration(border: InputBorder.none, hintText: "Title"),
+      style: GoogleFonts.roboto(
+        fontSize: 24,
+        fontWeight: FontWeight.w400,
+      ),
+      keyboardType: TextInputType.multiline,
+      cursorColor: brown,
+    );
+
+    List<Widget> actions = [
+      IconButton(
+        onPressed: _save,
+        icon: const Icon(Icons.check),
+      ),
+      IconButton(
+        onPressed: _delete,
+        icon: const Icon(Icons.delete),
+      )
+    ];
+
+    Widget textBody = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: TextField(
+        controller: _textController,
+        decoration: const InputDecoration(
+            border: InputBorder.none, hintText: "Write here"),
+        maxLines: null,
+        cursorColor: brown,
+        style: TextStyle(fontSize: 20),
+      ),
+    );
+
     return Scaffold(
       backgroundColor: beige,
-      appBar: AppBar(
-        backgroundColor: beige,
-        iconTheme: const IconThemeData(color: black),
-        elevation: 0,
-        title: Text(
-          _titleController.text.isNotEmpty ? _titleController.text : 'Untitled',
-          style: const TextStyle(color: black),
-        ),
-        actions: [
-          IconButton(
-            onPressed: _save,
-            icon: const Icon(Icons.check),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            title: titleTF,
+            actions: actions,
           ),
-          IconButton(
-            onPressed: _delete,
-            icon: const Icon(Icons.delete),
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                  border: InputBorder.none, hintText: "Title"),
-              style: GoogleFonts.roboto(
-                fontSize: 24,
-                fontWeight: FontWeight.w400,
-              ),
-              keyboardType: TextInputType.multiline,
-              cursorColor: brown,
-            ),
+          SliverToBoxAdapter(
+            child: textBody,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: TextField(
-              controller: _textController,
-              decoration: const InputDecoration(
-                  border: InputBorder.none, hintText: "Write here"),
-              maxLines: null,
-              cursorColor: brown,
-            ),
-          )
         ],
       ),
     );
