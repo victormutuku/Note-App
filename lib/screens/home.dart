@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:note_app/screens/empty_notes.dart';
-import 'package:note_app/screens/settings.dart';
-import 'package:note_app/widgets/circular_progress_bar.dart';
 import 'package:provider/provider.dart';
 
+import '../models/note.dart';
+import '../widgets/circular_progress_bar.dart';
+import '../widgets/note_card.dart';
 import './new_note.dart';
-import '../widgets/notes_grid.dart';
 import '../utils/notes.dart';
 import '../utils/colors.dart';
+import 'empty_notes.dart';
+import 'settings.dart';
 
 enum Selection { edit, settings }
 
@@ -20,59 +21,71 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isLoading = false;
-  bool _editSelected = false;
+  bool isLoading = false, isSelecting = false, selectAll = false;
+  List<Selectable<String>?> selectables = [], listedNotes = [];
+
+  void onNoteSelected(int i) {
+    setState(() {
+      listedNotes[i]!.isSelected = !listedNotes[i]!.isSelected;
+      if (listedNotes[i]!.isSelected) {
+        selectables.add(listedNotes[i]);
+      } else {
+        selectables.remove(listedNotes[i]);
+      }
+    });
+  }
+
+  void onSelectedAll() {
+    setState(() {
+      selectAll = !selectAll;
+      for (final note in listedNotes) {
+        note!.isSelected = true;
+        selectables.add(note);
+      }
+    });
+  }
+
+  void onUnSelectedAll() {
+    setState(() {
+      selectAll = !selectAll;
+      for (final note in listedNotes) {
+        note!.isSelected = false;
+        selectables.remove(note);
+      }
+    });
+  }
 
   Widget build(BuildContext context) {
-    final notes = Provider.of<Notes>(context).getNotes();
-
-    List<Widget> actions = [
-      PopupMenuButton(
-        color: beige,
-        icon: const Icon(
-          Icons.more_vert,
-          color: brown,
+    Provider.of<Notes>(context).getNotes();
+    Size size = MediaQuery.of(context).size;
+    FloatingActionButton fab = FloatingActionButton(
+      onPressed: () => Navigator.of(context).pushNamed(NewNote.routeName),
+      backgroundColor: isSelecting ? red : brown,
+      child: Icon(
+        isSelecting ? Icons.delete : Icons.add,
+        color: white,
+      ),
+    );
+    var selectionActions = [
+      TextButton(
+        onPressed: onSelectedAll,
+        child: Text(
+          'Select All',
+          style: TextStyle(color: black),
         ),
-        position: PopupMenuPosition.under,
-        itemBuilder: (_) => [
-          const PopupMenuItem(
-            value: Selection.edit,
-            child: Text('Edit'),
-          ),
-          const PopupMenuItem(
-            value: Selection.settings,
-            child: Text('Settings'),
-          ),
-        ],
-        onSelected: (value) {
-          if (value == Selection.settings) {
-            Navigator.of(context).pushNamed(SettingsScreen.routeName);
-          } else {
-            setState(() {
-              _editSelected = !_editSelected;
-            });
-          }
-        },
-      )
+      ),
+      TextButton(
+        onPressed: onUnSelectedAll,
+        child: Text(
+          'Unselect',
+          style: TextStyle(color: black),
+        ),
+      ),
+      IconButton(
+        onPressed: () => setState(() => isSelecting = !isSelecting),
+        icon: const Icon(Icons.cancel),
+      ),
     ];
-
-    FloatingActionButton fab = _editSelected == false
-        ? FloatingActionButton(
-            onPressed: () => Navigator.of(context).pushNamed(NewNote.routeName),
-            backgroundColor: brown,
-            child: const Icon(
-              Icons.add,
-              color: white,
-            ),
-          )
-        : FloatingActionButton(
-            onPressed: () => Navigator.of(context).pushNamed(NewNote.routeName),
-            backgroundColor: red,
-            child: const Icon(
-              Icons.delete,
-              color: white,
-            ),
-          );
 
     return Scaffold(
       backgroundColor: beige,
@@ -80,18 +93,68 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(color: brown),
         title: Text(
-          _editSelected == false ? 'Notes' : 'Selected',
+          isSelecting ? 'Select Notes' : 'Notes',
           style: TextStyle(color: black),
         ),
-        centerTitle: true,
-        actions: actions,
+        centerTitle: !isSelecting,
+        actions: isSelecting
+            ? selectionActions
+            : [
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(SettingsScreen.routeName);
+                  },
+                  icon: const Icon(Icons.settings),
+                )
+              ],
       ),
       body: Consumer<Notes>(
-        builder: (context, notes, _) => notes.fetchedNotes.isEmpty
-            ? const EmptyNotes()
-            : _isLoading
-                ? CircularProgressBar()
-                : NotesGrid(_editSelected),
+        builder: (context, notes, _) {
+          for (final note in notes.fetchedNotes) {
+            listedNotes.add(Selectable<String>(note['id'], false));
+          }
+          var notesGrid = OrientationBuilder(
+            builder: (context, orientation) => Consumer<Notes>(
+              builder: (context, notes, child) => GridView.builder(
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: orientation == Orientation.portrait
+                        ? size.width / 2
+                        : size.height / 2),
+                itemCount: notes.fetchedNotes.length,
+                itemBuilder: (context, i) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridTile(
+                    child: NoteCard(
+                      id: notes.fetchedNotes[i]['id'],
+                      title: notes.fetchedNotes[i]['title'],
+                      text: notes.fetchedNotes[i]['text'],
+                      isSelected: listedNotes[i]!.isSelected,
+                      isSelecting: isSelecting,
+                      onTap: () {
+                        if (isSelecting) {
+                          onNoteSelected(i);
+                        } else {
+                          Navigator.of(context).pushNamed(
+                            NewNote.routeName,
+                            arguments: notes.fetchedNotes[i]['id'],
+                          );
+                        }
+                      },
+                      onLongPress: () =>
+                          setState(() => isSelecting = !isSelecting),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          return notes.fetchedNotes.isEmpty
+              ? const EmptyNotes()
+              : isLoading
+                  ? CircularProgressBar()
+                  : notesGrid;
+        },
       ),
       floatingActionButton: fab,
     );
